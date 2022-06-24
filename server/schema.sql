@@ -1,14 +1,31 @@
-CREATE DATABASE chat;
+/*CREATE DATABASE chat;*/
 
 USE chat;
 
+CREATE TABLE rooms (
+  room_id int AUTO_INCREMENT PRIMARY KEY,
+  roomname varchar(15)
+);
+
+CREATE TABLE users (
+  user_id int AUTO_INCREMENT PRIMARY KEY,
+  username varchar(15)
+);
+
 CREATE TABLE messages (
-  /* Describe your table here.*/
+  message_id int AUTO_INCREMENT PRIMARY KEY,
+  message_text varchar(140) NOT NULL,
+  user_id int,
+  CONSTRAINT fk_user_id
+  FOREIGN KEY (user_id)
+    REFERENCES users(user_id),
+  room_id int,
+  CONSTRAINT fk_room_id
+  FOREIGN KEY (room_id)
+    REFERENCES rooms(room_id)
 );
 
 /* Create other tables and define schemas for them here! */
-
-
 
 
 /*  Execute this file from the command line by typing:
