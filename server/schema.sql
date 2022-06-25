@@ -2,10 +2,10 @@
 
 USE chat;
 
-CREATE TABLE rooms (
-  room_id int AUTO_INCREMENT PRIMARY KEY,
-  roomname varchar(15)
-);
+-- CREATE TABLE rooms (
+--   room_id int AUTO_INCREMENT PRIMARY KEY,
+--   roomname varchar(15)
+-- );
 
 CREATE TABLE users (
   user_id int AUTO_INCREMENT PRIMARY KEY,
@@ -19,10 +19,7 @@ CREATE TABLE messages (
   CONSTRAINT fk_user_id
   FOREIGN KEY (user_id)
     REFERENCES users(user_id),
-  room_id int,
-  CONSTRAINT fk_room_id
-  FOREIGN KEY (room_id)
-    REFERENCES rooms(room_id)
+  room_name varchar(15) NOT NULL
 );
 
 /* Create other tables and define schemas for them here! */

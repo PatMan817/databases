@@ -23,10 +23,10 @@ describe('Persistent Node Chat Server', () => {
     /* Empty the db table before all tests so that multiple tests
      * (or repeated runs of the tests)  will not fail when they should be passing
      * or vice versa */
-    dbConnection.query('SET FOREIGN_KEY_CHECKS = 0;')
-    dbConnection.query(`truncate rooms`, done);
+    //dbConnection.query('SET FOREIGN_KEY_CHECKS = 0;')
+    //dbConnection.query(`truncate rooms`, done);
     //dbConnection.query(`truncate users`, done);
-    dbConnection.query(`truncate ${tablename}`, done);
+    //dbConnection.query(`truncate ${tablename}`, done);
   }, 6500);
 
   afterAll(() => {

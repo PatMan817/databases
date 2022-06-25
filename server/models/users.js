@@ -34,7 +34,7 @@ module.exports = {
       console.log('Connection established sucessfully');
     });
     //check to see if user exists
-    var currentUserObj = await new Promise((resolve, reject) => {db.connection.query(`SELECT user_id from USERS where username = '${username}';`, [], function(err, res) {
+    var currentUserId = await new Promise((resolve, reject) => {db.connection.query(`SELECT user_id from USERS where username = '${username}';`, [], function(err, res) {
       if (err) {
         reject(err)
       } else {
@@ -43,8 +43,8 @@ module.exports = {
     }
     )})
 
-    if (currentUserObj === undefined) {
-      currentUserObj = await new Promise((resolve, reject) => {db.connection.query(`INSERT INTO USERS VALUES (NULL, '${username}');`, [], function(err, res) {
+    if (currentUserId === undefined) {
+      currentUserId = await new Promise((resolve, reject) => {db.connection.query(`INSERT INTO USERS VALUES (NULL, '${username}');`, [], function(err, res) {
         if (err) {
           reject(err)
         } else {
@@ -53,7 +53,7 @@ module.exports = {
       }
     )})
     } else {
-      currentUserObj = currentUserObj.user_id;
+      currentUserId = currentUserId.user_id;
     }
 
     //insert necessary key/values into messages table
@@ -62,7 +62,6 @@ module.exports = {
     //   console.error(err);
     // })
     //return success message
-    console.log('Log in users models of user_id: ', currentUserObj)
-    return currentUserObj;
+    return currentUserId;
   }
 };
