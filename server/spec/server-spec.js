@@ -23,10 +23,10 @@ describe('Persistent Node Chat Server', () => {
     /* Empty the db table before all tests so that multiple tests
      * (or repeated runs of the tests)  will not fail when they should be passing
      * or vice versa */
-    //dbConnection.query('SET FOREIGN_KEY_CHECKS = 0;')
+    dbConnection.query('SET FOREIGN_KEY_CHECKS = 0;')
     //dbConnection.query(`truncate rooms`, done);
-    //dbConnection.query(`truncate users`, done);
-    //dbConnection.query(`truncate ${tablename}`, done);
+    dbConnection.query(`truncate users`, done);
+    dbConnection.query(`truncate ${tablename}`, done);
   }, 6500);
 
   afterAll(() => {
@@ -42,7 +42,6 @@ describe('Persistent Node Chat Server', () => {
    axios.post(`${API_URL}/users`, { username })
      .then(() => {
        // Post a message to the node chat server:
-       console.log('Axios Start');
        return axios.post(`${API_URL}/messages`, { username, message, roomname });
      })
      .then(() => {
@@ -50,7 +49,7 @@ describe('Persistent Node Chat Server', () => {
 
        /* TODO: You might have to change this test to get all the data from
         * your message table, since this is schema-dependent. */
-       const queryString = 'SELECT * FROM messages';
+       const queryString = 'SELECT * FROM messages;';
        const queryArgs = [];
 
        dbConnection.query(queryString, queryArgs, (err, results) => {
@@ -59,10 +58,9 @@ describe('Persistent Node Chat Server', () => {
          }
          // Should have one result:
          expect(results.length).toEqual(1);
-         console.log(`Return of first test: ${JSON.stringify(results)}`)
+         //console.log(`Return of first test: ${JSON.stringify(results)}`)
 
          // TODO: If you don't have a column named text, change this test.
-         console.log(results[0].message_text)
          expect(results[0].message_text).toEqual(message);
          done();
        });
@@ -74,27 +72,39 @@ describe('Persistent Node Chat Server', () => {
 
   it('Should output all messages from the DB', (done) => {
     // Let's insert a message into the db
-       const queryString = 'INSERT INTO messages VALUES(NULL);';
+      const username = 'Maverick';
+      const message = 'Just a walk in the park, Kazansky.';
+      const roomname = 'FlightDeck';
+       const queryString1 = `INSERT INTO users VALUES(NULL, "${username}");`;
        const queryArgs = [];
+
     /* TODO: The exact query string and query args to use here
      * depend on the schema you design, so I'll leave them up to you. */
-    dbConnection.query(queryString, queryArgs, (err) => {
+    dbConnection.query(queryString1, queryArgs, (err, res) => {
       if (err) {
         throw err;
       }
-console.log('line 80')
-      // Now query the Node chat server and see if it returns the message we just inserted:
-      axios.get(`${API_URL}/messages`)
-        .then((response) => {
-          const messageLog = response.data;
-          console.log(`Return of second test: ${messageLog}`)
-          expect(messageLog[0].text).toEqual(message);
-          expect(messageLog[0].roomname).toEqual(roomname);
-          done();
-        })
-        .catch((err) => {
-          throw err;
-        });
+      console.log('this is response of query 1:', res)
+      console.log('DB Query 1')
+      const queryString2 = `INSERT INTO messages VALUES(NULL, "${message}", ${res.insertId}, "${roomname}");`
+      dbConnection.query(queryString2, queryArgs, (err) => {
+        if (err) {
+          throw err
+        }
+        console.log('DB Query 2')
+        // Now query the Node chat server and see if it returns the message we just inserted:
+        axios.get(`${API_URL}/messages`)
+          .then((response) => {
+            const messageLog = response.data;
+            console.log(`Return of second test: ${JSON.stringify(messageLog)}`)
+            expect(messageLog[1].message_text).toEqual(message);
+            expect(messageLog[1].room_name).toEqual(roomname);
+            done();
+          })
+          .catch((err) => {
+            throw err;
+          });
+      })
     });
   });
 });

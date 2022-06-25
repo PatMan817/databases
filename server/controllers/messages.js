@@ -7,12 +7,13 @@ module.exports = {
     //res.writeHead(200, headers)
     res.end(JSON.stringify(messageData))
   }, // a function which handles a get request for all messages
-  post: function (req, res) {
-    var message = req.body.message;
+  post: async function (req, res) {
+    var message = req.body;
     //invoke create on message
-    models.messages.create(message);
+    console.log('in messages controllers this is message obj: ', message)
+    var returnMessage = await models.messages.create(message);
     //return success
-    res.end('Yay', (err) => {
+    res.end(returnMessage, (err) => {
       if (err) {
         console.error(err)
       }
