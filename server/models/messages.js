@@ -13,7 +13,7 @@ module.exports = {
     });
     //on success query database for all messages
     var messages = await new Promise((resolve, reject) => {
-      db.connection.query('SELECT * FROM MESSAGES', [], (err, results) => {
+      db.connection.query('SELECT * FROM MESSAGES;', [], (err, results) => {
         if (err) {
           reject(err)
         } else {

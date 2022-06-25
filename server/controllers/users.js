@@ -6,6 +6,7 @@ module.exports = {
     console.log('Users Get')
     var userData = await models.users.getAll();
     //res.writeHead(200, headers)
+    console.log('USER DATA INSIDE Controllers', userData)
     res.end(JSON.stringify(userData))
   },
   post: async function (req, res) {

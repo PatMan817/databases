@@ -36,7 +36,7 @@ describe('Persistent Node Chat Server', () => {
   it('Should insert posted messages to the DB', (done) => {
    const username = 'Valjean';
    const message = 'In mercy\'s name, three days is all I need.';
-   const roomname = 'Hello';
+   const roomname = 'Lobby';
    // Create a user on the chat server database.
    console.log('Test start');
    axios.post(`${API_URL}/users`, { username })
@@ -84,7 +84,6 @@ describe('Persistent Node Chat Server', () => {
       if (err) {
         throw err;
       }
-      console.log('this is response of query 1:', res)
       console.log('DB Query 1')
       const queryString2 = `INSERT INTO messages VALUES(NULL, "${message}", ${res.insertId}, "${roomname}");`
       dbConnection.query(queryString2, queryArgs, (err) => {
@@ -107,4 +106,23 @@ describe('Persistent Node Chat Server', () => {
       })
     });
   });
+
+  it('Should not contain duplicate names in users DB table', (done) => {
+    const username = 'Valjean';
+    const message = 'I stole a loaf of bread.';
+    const roomname = 'French Sewers';
+    // Create a user on the chat server database.
+    axios.post(`${API_URL}/users`, { username })
+    .then(() => axios.post(`${API_URL}/users`, { username }))
+    .then(() => axios.get(`${API_URL}/users`))
+    .then((response) => {
+      var userData = response.data;
+      expect(userData.length).toEqual(2);
+      done();
+    })
+    .catch((err) => {
+        throw err;
+    })
+  })
+
 });

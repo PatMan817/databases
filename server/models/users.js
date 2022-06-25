@@ -1,7 +1,7 @@
 var db = require('../db');
 
 module.exports = {
-  getAll: function () {
+  getAll: async function () {
     //use connection.connect
     console.log('Users getAll')
     db.connection.connect((error) => {
@@ -12,10 +12,15 @@ module.exports = {
       console.log('Connection established sucessfully');
     });
     //on success query database for all messages
-    var users;
-    db.connection.query('SELECT * FROM USERS', [], (err, results) => {
-      users = results;
-    })
+    var users = await new Promise ((resolve, reject) => {
+      db.connection.query('SELECT * FROM USERS;', [], (err, results) => {
+        if(err) {
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      });
+    });
     //close connection
     // db.connection.end((err) => {
     //   console.error(err);
