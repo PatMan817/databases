@@ -23,10 +23,10 @@ describe('Persistent Node Chat Server', () => {
     /* Empty the db table before all tests so that multiple tests
      * (or repeated runs of the tests)  will not fail when they should be passing
      * or vice versa */
-    // dbConnection.query('SET FOREIGN_KEY_CHECKS = 0;')
-    // dbConnection.query(`truncate rooms`, done);
-    // dbConnection.query(`truncate users`, done);
-    // dbConnection.query(`truncate ${tablename}`, done);
+    dbConnection.query('SET FOREIGN_KEY_CHECKS = 0;')
+    dbConnection.query(`truncate rooms`, done);
+    //dbConnection.query(`truncate users`, done);
+    dbConnection.query(`truncate ${tablename}`, done);
   }, 6500);
 
   afterAll(() => {
@@ -59,9 +59,10 @@ describe('Persistent Node Chat Server', () => {
          }
          // Should have one result:
          expect(results.length).toEqual(1);
-         console.log(`Return of first test: ${results}`)
+         console.log(`Return of first test: ${JSON.stringify(results)}`)
 
          // TODO: If you don't have a column named text, change this test.
+         console.log(results[0].message_text)
          expect(results[0].message_text).toEqual(message);
          done();
        });
@@ -73,7 +74,7 @@ describe('Persistent Node Chat Server', () => {
 
   it('Should output all messages from the DB', (done) => {
     // Let's insert a message into the db
-       const queryString = 'INSERT ';
+       const queryString = 'INSERT INTO messages VALUES(NULL);';
        const queryArgs = [];
     /* TODO: The exact query string and query args to use here
      * depend on the schema you design, so I'll leave them up to you. */

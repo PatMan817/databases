@@ -17,14 +17,14 @@ module.exports = {
       users = results;
     })
     //close connection
-    db.connection.end((err) => {
-      console.error(err);
-    })
+    // db.connection.end((err) => {
+    //   console.error(err);
+    //})
     //return array of all message objects
     return users;
   },
 
-  create: function (username) {
+  create: async function (username) {
     //connect to db
     db.connection.connect((error) => {
       if(error){
@@ -33,16 +33,36 @@ module.exports = {
       }
       console.log('Connection established sucessfully');
     });
-    var newUserID;
+    //check to see if user exists
+    var currentUserObj = await new Promise((resolve, reject) => {db.connection.query(`SELECT user_id from USERS where username = '${username}';`, [], function(err, res) {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(res[0])
+      }
+    }
+    )})
+
+    if (currentUserObj === undefined) {
+      currentUserObj = await new Promise((resolve, reject) => {db.connection.query(`INSERT INTO USERS VALUES (NULL, '${username}');`, [], function(err, res) {
+        if (err) {
+          reject(err)
+        } else {
+          resolve (res.insertId)
+        }
+      }
+    )})
+    } else {
+      currentUserObj = currentUserObj.user_id;
+    }
+
     //insert necessary key/values into messages table
-    db.connection.query(`INSERT INTO USERS VALUES (NULL, '${username}');`, [], function(err, res) {
-      newUserID = res.insertID;
-    })
     //close connection
-    db.connection.end((err) => {
-      console.error(err);
-    })
+    // db.connection.end((err) => {
+    //   console.error(err);
+    // })
     //return success message
-    return newUserID;
+    console.log('Log in users models of user_id: ', currentUserObj)
+    return currentUserObj;
   }
 };

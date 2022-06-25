@@ -10,8 +10,8 @@ module.exports = {
   },
   post: async function (req, res) {
     var username = req.body.username;
-    var newID = await models.users.create(username)
-    console.log(newID)
-    res.end(newID)
+    var newId = await models.users.create(username)
+    console.log('Log in users controllers: ', newId)
+    res.end(JSON.stringify(newId))
   }
 };
